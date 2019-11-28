@@ -4,6 +4,13 @@ from pymunk.pyglet_util import DrawOptions
 
 
 class Block:
+    """
+    The class for a block
+    Mass: the mass the block
+    X: Initial x position
+    Y: Initial y position
+    PhysSpace: The physics space to add items to
+    """
     def __init__(self, Mass, X, Y, PhysSpace):
         self.Body = pymunk.Body(Mass, pymunk.inf)
         self.Body.position = X, Y
@@ -22,6 +29,9 @@ class Block:
 
     def update(self):
         self.BlockSprite.position = self.Body.position
+
+    def give_velocity(self, velocity):
+        self.Body.velocity = (velocity, 0)
 
 
 # Initiate the window
@@ -47,28 +57,12 @@ Wall.body.position = 10, Window.height / 2
 Wall.elasticity = 1
 Space.add(Wall)
 
-# Create Right Box
-BoxRight = pymunk.Body(10, pymunk.inf)
-BoxRight.position = 2 * (Window.width / 3), 45
-BoxRightShape = pymunk.Poly.create_box(BoxRight, size=(50, 50))
-BoxRightShape.elasticity = 1
-BoxRight.velocity = (-200, 0)
-Space.add(BoxRight, BoxRightShape)
+# Create Right Block
+BlockRight = Block(10, 2 * (Window.width / 3), 45, Space)
+BlockRight.give_velocity(-100)
 
-BoxImg = pyglet.image.load('res/sqr.png')
-BoxImg.anchor_x = BoxImg.width // 2
-BoxImg.anchor_y = BoxImg.height // 2
-BoxRightSprite = pyglet.sprite.Sprite(BoxImg, x=BoxRight.position.x, y=BoxRight.position.y)
-
-# Create Left Box
-BoxLeft = pymunk.Body(1, pymunk.inf)
-BoxLeft.position = Window.width / 3, 45
-BoxLeftShape = pymunk.Poly.create_box(BoxLeft, size=(50, 50))
-BoxLeftShape.elasticity = 1
-Space.add(BoxLeft, BoxLeftShape)
-BoxLeftSprite = pyglet.sprite.Sprite(BoxImg, x=BoxLeft.position.x, y=BoxLeft.position.y)
-
-TestBlock = Block(10, 50, 50, Space)
+# Create Left Block
+BlockLeft = Block(1, Window.width/3, 45, Space)
 
 
 @Window.event
@@ -76,16 +70,15 @@ def on_draw():
     Window.clear()
     TitleLabel.draw()
     Space.debug_draw(Options)
-    BoxRightSprite.draw()
-    BoxLeftSprite.draw()
-    TestBlock.draw()
+    BlockRight.draw()
+    BlockLeft.draw()
 
 
 def update(dt):
     Space.step(dt)
-    BoxRightSprite.position = BoxRight.position
-    BoxLeftSprite.position = BoxLeft.position
-    TestBlock.update()
+    BlockRight.update()
+    BlockLeft.update()
+
 
 
 if __name__ == '__main__':
