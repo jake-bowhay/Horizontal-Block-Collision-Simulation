@@ -1,6 +1,5 @@
 import pyglet
 import pymunk
-from pymunk.pyglet_util import DrawOptions
 
 
 class Block:
@@ -10,9 +9,10 @@ class Block:
     X: Initial x position
     Y: Initial y position
     PhysSpace: The physics space to add items to
+    RenderBatch: Batch to add block to
     """
 
-    def __init__(self, Mass, X, Y, PhysSpace, batch):
+    def __init__(self, Mass, X, Y, PhysSpace, RenderBatch):
         self.Body = pymunk.Body(Mass, pymunk.inf)
         self.Body.position = X, Y
         self.BodyShape = pymunk.Poly.create_box(self.Body, size=(50, 50))
@@ -24,7 +24,7 @@ class Block:
         self.BlockImg.anchor_x = self.BlockImg.width // 2
         self.BlockImg.anchor_y = self.BlockImg.height // 2
         self.BlockSprite = pyglet.sprite.Sprite(self.BlockImg, x=self.Body.position.x, y=self.Body.position.y,
-                                                batch=batch)
+                                                batch=RenderBatch)
 
     def update(self):
         self.BlockSprite.position = self.Body.position
@@ -34,9 +34,8 @@ class Block:
 
 
 # Initiate the window
-Window = pyglet.window.Window(1280, 720, 'Block Collision Simulator', resizable=True)
+Window = pyglet.window.Window(1280, 720, 'Block Collision Simulator', resizable=False)
 Batch = pyglet.graphics.Batch()
-Options = DrawOptions()
 
 # Define Title Label
 TitleLabel = pyglet.text.Label(text='Block Collision Simulator', x=Window.width / 2, y=Window.height - 20, batch=Batch
@@ -50,11 +49,17 @@ Ground = pymunk.Poly.create_box(Space.static_body, size=(Window.width, 20))
 Ground.body.position = Window.width / 2, 10
 Space.add(Ground)
 
+GroundImg = pyglet.image.load('res/ground.png')
+GroundSprite = pyglet.sprite.Sprite(GroundImg, x=0, y=0, batch=Batch)
+
 # Create Wall
 Wall = pymunk.Poly.create_box(Space.static_body, size=(20, Window.height))
 Wall.body.position = 10, Window.height / 2
 Wall.elasticity = 1
 Space.add(Wall)
+
+WallImg = pyglet.image.load('res/wall.png')
+WallSprite = pyglet.sprite.Sprite(WallImg, x=0, y=0, batch=Batch)
 
 # Create Right Block
 BlockRight = Block(10, 2 * (Window.width / 3), 45, Space, Batch)
@@ -68,7 +73,6 @@ BlockLeft = Block(1, Window.width / 3, 45, Space, Batch)
 def on_draw():
     Window.clear()
     Batch.draw()
-    Space.debug_draw(Options)
 
 
 def update(dt):
