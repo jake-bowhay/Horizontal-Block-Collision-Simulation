@@ -15,22 +15,30 @@ TitleLabel = pyglet.text.Label(text='Block Collision Simulator', x=Window.width 
 Space = pymunk.Space()
 
 # Create the ground
-Ground = pymunk.Body(pymunk.inf, pymunk.inf, pymunk.Body.STATIC)
-Ground.position = Window.width/2, 10
-GroundBox = pymunk.Poly.create_box(Ground, size=(Window.width, 20))
-Space.add(Ground, GroundBox)
+Ground = pymunk.Poly.create_box(Space.static_body, size=(Window.width, 20))
+Ground.body.position = Window.width / 2, 10
+Space.add(Ground)
 
 # Create Wall
-Wall = pymunk.Body(pymunk.inf, pymunk.inf, pymunk.Body.STATIC)
-Wall.position = 10, Window.height/2
-WallBox = pymunk.Poly.create_box(Wall, size=(20,Window.height))
-Space.add(Wall, WallBox)
+Wall = pymunk.Poly.create_box(Space.static_body, size=(20, Window.height))
+Wall.body.position = 10, Window.height/2
+Wall.elasticity = 1
+Space.add(Wall)
 
-# Create Box
-Box = pymunk.Body(10, 1000)
-Box.position = Window.width/2, Window.height/2
-BoxPoly = pymunk.Poly.create_box(Box, size=(50,50))
-Space.add(Box, BoxPoly)
+# Create Right Box
+BoxRight = pymunk.Body(10, pymunk.inf)
+BoxRight.position = 2 * (Window.width / 3), 45
+BoxRightShape = pymunk.Poly.create_box(BoxRight, size=(50, 50))
+BoxRightShape.elasticity = 1
+BoxRight.velocity = (-100, 0)
+Space.add(BoxRight, BoxRightShape)
+
+# Create Left Box
+BoxLeft = pymunk.Body(1, pymunk.inf)
+BoxLeft.position = Window.width / 3, 45
+BoxLeftShape = pymunk.Poly.create_box(BoxLeft, size=(50, 50))
+BoxLeftShape.elasticity = 1
+Space.add(BoxLeft, BoxLeftShape)
 
 @Window.event
 def on_draw():
@@ -39,5 +47,10 @@ def on_draw():
     Space.debug_draw(Options)
 
 
+def update(dt):
+    Space.step(dt)
+
+
 if __name__ == '__main__':
+    pyglet.clock.schedule_interval(update, 1 / 60)
     pyglet.app.run()
