@@ -1,3 +1,5 @@
+from abc import ABC
+
 import pyglet
 import pymunk
 
@@ -33,55 +35,56 @@ class Block:
         self.Body.velocity = (velocity, 0)
 
 
-# Initiate the window
-Window = pyglet.window.Window(1280, 720, 'Block Collision Simulator', resizable=False)
-Batch = pyglet.graphics.Batch()
+class Simulation(pyglet.window.Window):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
-# Define Title Label
-TitleLabel = pyglet.text.Label(text='Block Collision Simulator', x=Window.width / 2, y=Window.height - 20, batch=Batch
-                               , anchor_x='center', anchor_y='center', font_size=24, color=(0, 0, 0, 255))
+        pyglet.gl.glClearColor(1, 1, 1, 1)
+        pyglet.clock.schedule_interval(self.update, 1 / 60)
 
-# Initiate space for Physics engine
-Space = pymunk.Space()
+        self.Batch = pyglet.graphics.Batch()
 
-# Create the ground
-Ground = pymunk.Poly.create_box(Space.static_body, size=(Window.width, 20))
-Ground.body.position = Window.width / 2, 10
-Space.add(Ground)
+        # Create Title Label
+        self.TitleLabel = pyglet.text.Label(text='Block Collision Simulator', x=self.width / 2, y=self.height - 20,
+                                            batch=self.Batch, anchor_x='center', anchor_y='center', font_size=24,
+                                            color=(0, 0, 0, 255))
+        # Initiate space for Physics engine
+        self.Space = pymunk.Space()
 
-GroundImg = pyglet.image.load('res/ground.png')
-GroundSprite = pyglet.sprite.Sprite(GroundImg, x=0, y=0, batch=Batch)
+        # Create the ground
+        Ground = pymunk.Poly.create_box(self.Space.static_body, size=(self.width, 20))
+        Ground.body.position = self.width / 2, 10
+        self.Space.add(Ground)
 
-# Create Wall
-Wall = pymunk.Poly.create_box(Space.static_body, size=(20, Window.height))
-Wall.body.position = 10, Window.height / 2
-Wall.elasticity = 1
-Space.add(Wall)
+        GroundImg = pyglet.image.load('res/ground.png')
+        self.GroundSprite = pyglet.sprite.Sprite(GroundImg, x=0, y=0, batch=self.Batch)
 
-WallImg = pyglet.image.load('res/wall.png')
-WallSprite = pyglet.sprite.Sprite(WallImg, x=0, y=0, batch=Batch)
+        # Create Wall
+        Wall = pymunk.Poly.create_box(self.Space.static_body, size=(20, self.height))
+        Wall.body.position = 10, self.height / 2
+        Wall.elasticity = 1
+        self.Space.add(Wall)
 
-# Create Right Block
-BlockRight = Block(10, 2 * (Window.width / 3), 45, Space, Batch)
-BlockRight.give_velocity(-100)
+        WallImg = pyglet.image.load('res/wall.png')
+        self.WallSprite = pyglet.sprite.Sprite(WallImg, x=0, y=0, batch=self.Batch)
 
-# Create Left Block
-BlockLeft = Block(1, Window.width / 3, 45, Space, Batch)
+        # Create Right Block
+        self.BlockRight = Block(10, 2*(self.width / 3), 45, self.Space, self.Batch)
+        self.BlockRight.give_velocity(-100)
 
+        # Create Left Block
+        self.BlockLeft = Block(1, self.width / 3, 45, self.Space, self.Batch)
 
-@Window.event
-def on_draw():
-    Window.clear()
-    Batch.draw()
+    def on_draw(self):
+        self.clear()
+        self.Batch.draw()
 
-
-def update(dt):
-    Space.step(dt)
-    BlockRight.update()
-    BlockLeft.update()
+    def update(self, dt):
+        self.Space.step(dt)
+        self.BlockRight.update()
+        self.BlockLeft.update()
 
 
 if __name__ == '__main__':
-    pyglet.clock.schedule_interval(update, 1 / 60)
-    pyglet.gl.glClearColor(1, 1, 1, 1)
+    Window = Simulation(1280, 720, "Block Collision Simulator", resizable=False)
     pyglet.app.run()
