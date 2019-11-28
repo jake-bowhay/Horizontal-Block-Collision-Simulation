@@ -11,7 +11,8 @@ class Block:
     Y: Initial y position
     PhysSpace: The physics space to add items to
     """
-    def __init__(self, Mass, X, Y, PhysSpace):
+
+    def __init__(self, Mass, X, Y, PhysSpace, batch):
         self.Body = pymunk.Body(Mass, pymunk.inf)
         self.Body.position = X, Y
         self.BodyShape = pymunk.Poly.create_box(self.Body, size=(50, 50))
@@ -22,10 +23,8 @@ class Block:
         self.BlockImg = pyglet.image.load('res/sqr.png')
         self.BlockImg.anchor_x = self.BlockImg.width // 2
         self.BlockImg.anchor_y = self.BlockImg.height // 2
-        self.BlockSprite = pyglet.sprite.Sprite(self.BlockImg, x=self.Body.position.x, y=self.Body.position.y)
-
-    def draw(self):
-        self.BlockSprite.draw()
+        self.BlockSprite = pyglet.sprite.Sprite(self.BlockImg, x=self.Body.position.x, y=self.Body.position.y,
+                                                batch=batch)
 
     def update(self):
         self.BlockSprite.position = self.Body.position
@@ -41,7 +40,7 @@ Options = DrawOptions()
 
 # Define Title Label
 TitleLabel = pyglet.text.Label(text='Block Collision Simulator', x=Window.width / 2, y=Window.height - 20, batch=Batch
-                               , anchor_x='center', anchor_y='center', font_size=24)
+                               , anchor_x='center', anchor_y='center', font_size=24, color=(0, 0, 0, 255))
 
 # Initiate space for Physics engine
 Space = pymunk.Space()
@@ -58,27 +57,24 @@ Wall.elasticity = 1
 Space.add(Wall)
 
 # Create Right Block
-BlockRight = Block(10, 2 * (Window.width / 3), 45, Space)
+BlockRight = Block(10, 2 * (Window.width / 3), 45, Space, Batch)
 BlockRight.give_velocity(-100)
 
 # Create Left Block
-BlockLeft = Block(1, Window.width/3, 45, Space)
+BlockLeft = Block(1, Window.width / 3, 45, Space, Batch)
 
 
 @Window.event
 def on_draw():
     Window.clear()
-    TitleLabel.draw()
+    Batch.draw()
     Space.debug_draw(Options)
-    BlockRight.draw()
-    BlockLeft.draw()
 
 
 def update(dt):
     Space.step(dt)
     BlockRight.update()
     BlockLeft.update()
-
 
 
 if __name__ == '__main__':
