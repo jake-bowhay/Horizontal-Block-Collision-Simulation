@@ -21,7 +21,6 @@ class Block:
         BodyShape = pymunk.Poly.create_box(self.Body, size=(50, 50))
         # Define shapes elasticity
         BodyShape.elasticity = 1
-
         # Add block to the physics space
         PhysSpace.add(self.Body, BodyShape)
 
@@ -50,7 +49,7 @@ class Simulation(pyglet.window.Window):
         # Set background to be clear
         pyglet.gl.glClearColor(1, 1, 1, 1)
         # Set clock speed
-        pyglet.clock.schedule_interval(self.update, 1 / 60)
+        pyglet.clock.schedule_interval(self.update, 1 / 600)
 
         # Create batch to draw all the graphics with
         self.Batch = pyglet.graphics.Batch()
@@ -59,6 +58,10 @@ class Simulation(pyglet.window.Window):
         self.TitleLabel = pyglet.text.Label(text='Block Collision Simulator', x=self.width / 2, y=self.height - 20,
                                             batch=self.Batch, anchor_x='center', anchor_y='center', font_size=24,
                                             color=(0, 0, 0, 255))
+        self.Counter = -2
+        self.CounterLabel = pyglet.text.Label('Counter = 0'.format(self.Counter), x=self.width / 2, y=self.height - 60, anchor_x='center',
+                                              anchor_y='center', font_size=24, color=(0, 0, 0, 255), batch=self.Batch)
+
         # Initiate space for Physics engine
         self.Space = pymunk.Space()
         self.Handler = self.Space.add_default_collision_handler()
@@ -83,17 +86,18 @@ class Simulation(pyglet.window.Window):
         WallImg = pyglet.image.load('res/wall.png')
         self.WallSprite = pyglet.sprite.Sprite(WallImg, x=0, y=0, batch=self.Batch)
 
-        # Create Right Block
-        self.BlockRight = Block(10, 2 * (self.width / 3), 45, self.Space, self.Batch)
+        self.BlockRight = Block(100, 2 * (self.width / 3), 45, self.Space, self.Batch)
         self.BlockRight.give_velocity(-100)
 
-        # Create Left Block
         self.BlockLeft = Block(1, self.width / 3, 45, self.Space, self.Batch)
 
         pyglet.app.run()
 
     def coll_begin(self, arbiter, space, data):
-        print('Begin')
+        self.Counter += 1
+        print(self.Counter)
+        if self.Counter > 0:
+            self.CounterLabel.text = 'Counter: {}'.format(self.Counter)
         return True
 
     def on_draw(self):
