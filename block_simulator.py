@@ -15,15 +15,15 @@ class Block:
     def __init__(self, Mass, X, Y, PhysSpace, RenderBatch):
         self.Body = pymunk.Body(Mass, pymunk.inf)
         self.Body.position = X, Y
-        self.BodyShape = pymunk.Poly.create_box(self.Body, size=(50, 50))
-        self.BodyShape.elasticity = 1
+        BodyShape = pymunk.Poly.create_box(self.Body, size=(50, 50))
+        BodyShape.elasticity = 1
 
-        PhysSpace.add(self.Body, self.BodyShape)
+        PhysSpace.add(self.Body, BodyShape)
 
-        self.BlockImg = pyglet.image.load('res/sqr.png')
-        self.BlockImg.anchor_x = self.BlockImg.width // 2
-        self.BlockImg.anchor_y = self.BlockImg.height // 2
-        self.BlockSprite = pyglet.sprite.Sprite(self.BlockImg, x=self.Body.position.x, y=self.Body.position.y,
+        BlockImg = pyglet.image.load('res/sqr.png')
+        BlockImg.anchor_x = BlockImg.width // 2
+        BlockImg.anchor_y = BlockImg.height // 2
+        self.BlockSprite = pyglet.sprite.Sprite(BlockImg, x=self.Body.position.x, y=self.Body.position.y,
                                                 batch=RenderBatch)
 
     def update(self):
