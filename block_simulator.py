@@ -1,5 +1,3 @@
-from abc import ABC
-
 import pyglet
 import pymunk
 
