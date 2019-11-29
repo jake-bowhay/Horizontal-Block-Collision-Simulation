@@ -61,6 +61,8 @@ class Simulation(pyglet.window.Window):
                                             color=(0, 0, 0, 255))
         # Initiate space for Physics engine
         self.Space = pymunk.Space()
+        self.Handler = self.Space.add_default_collision_handler()
+        self.Handler.begin = self.coll_begin
 
         # Create the ground in physics engine
         Ground = pymunk.Poly.create_box(self.Space.static_body, size=(self.width, 20))
@@ -82,13 +84,17 @@ class Simulation(pyglet.window.Window):
         self.WallSprite = pyglet.sprite.Sprite(WallImg, x=0, y=0, batch=self.Batch)
 
         # Create Right Block
-        self.BlockRight = Block(10, 2*(self.width / 3), 45, self.Space, self.Batch)
+        self.BlockRight = Block(10, 2 * (self.width / 3), 45, self.Space, self.Batch)
         self.BlockRight.give_velocity(-100)
 
         # Create Left Block
         self.BlockLeft = Block(1, self.width / 3, 45, self.Space, self.Batch)
 
         pyglet.app.run()
+
+    def coll_begin(self, arbiter, space, data):
+        print('Begin')
+        return True
 
     def on_draw(self):
         self.clear()
