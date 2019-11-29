@@ -95,7 +95,6 @@ class Simulation(pyglet.window.Window):
 
     def coll_begin(self, arbiter, space, data):
         self.Counter += 1
-        print(self.Counter)
         if self.Counter > 0:
             self.CounterLabel.text = 'Counter: {}'.format(self.Counter)
         return True
@@ -108,7 +107,3 @@ class Simulation(pyglet.window.Window):
         self.Space.step(dt)
         self.BlockRight.update()
         self.BlockLeft.update()
-
-
-if __name__ == '__main__':
-    Window = Simulation(1280, 720, "Block Collision Simulator", resizable=False)

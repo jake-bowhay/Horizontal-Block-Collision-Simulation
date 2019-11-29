@@ -1,5 +1,5 @@
 import tkinter
-
+from block_simulator import Simulation
 
 class Application(tkinter.Frame):
     def __init__(self, master=None):
@@ -11,8 +11,11 @@ class Application(tkinter.Frame):
     def create_widgets(self):
         self.Run = tkinter.Button(self)
         self.Run['text'] = 'Run Simulation'
-        self.Run['command'] = print('Run')
+        self.Run['command'] = lambda: self.launch_simulation()
         self.Run.pack(side='top')
+
+    def launch_simulation(self):
+        simulation = Simulation(1280, 720, "Block Collision Simulator", resizable=False)
 
 
 root = tkinter.Tk()
