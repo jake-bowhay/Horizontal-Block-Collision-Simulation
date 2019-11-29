@@ -73,6 +73,8 @@ class Simulation(pyglet.window.Window):
         # Create Left Block
         self.BlockLeft = Block(1, self.width / 3, 45, self.Space, self.Batch)
 
+        pyglet.app.run()
+
     def on_draw(self):
         self.clear()
         self.Batch.draw()
@@ -85,4 +87,4 @@ class Simulation(pyglet.window.Window):
 
 if __name__ == '__main__':
     Window = Simulation(1280, 720, "Block Collision Simulator", resizable=False)
-    pyglet.app.run()
+
