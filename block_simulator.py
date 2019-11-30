@@ -49,7 +49,7 @@ class Simulation(pyglet.window.Window):
         # Set background to be clear
         pyglet.gl.glClearColor(1, 1, 1, 1)
         # Set clock speed
-        pyglet.clock.schedule_interval(self.update, 1 / 600)
+        pyglet.clock.schedule_interval(self.update, 1/60)
 
         # Create batch to draw all the graphics with
         self.Batch = pyglet.graphics.Batch()
@@ -86,8 +86,8 @@ class Simulation(pyglet.window.Window):
         WallImg = pyglet.image.load('res/wall.png')
         self.WallSprite = pyglet.sprite.Sprite(WallImg, x=0, y=0, batch=self.Batch)
 
-        self.BlockRight = Block(100, 2 * (self.width / 3), 45, self.Space, self.Batch)
-        self.BlockRight.give_velocity(-100)
+        self.BlockRight = Block(10000, 2 * (self.width / 3), 45, self.Space, self.Batch)
+        self.BlockRight.give_velocity(-10)
 
         self.BlockLeft = Block(1, self.width / 3, 45, self.Space, self.Batch)
 
