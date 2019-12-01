@@ -19,6 +19,7 @@ class Block:
         self.Body.position = X, Y
         # Create shape for body
         BodyShape = pymunk.Poly.create_box(self.Body, size=(50, 50))
+        BodyShape.id = 'Block'
         # Define shapes elasticity
         BodyShape.elasticity = 1
         # Add block to the physics space
@@ -58,7 +59,7 @@ class Simulation(pyglet.window.Window):
         self.TitleLabel = pyglet.text.Label(text='Block Collision Simulator', x=self.width / 2, y=self.height - 20,
                                             batch=self.Batch, anchor_x='center', anchor_y='center', font_size=24,
                                             color=(0, 0, 0, 255))
-        self.Counter = -2
+        self.Counter = 0
         self.CounterLabel = pyglet.text.Label('Counter = 0'.format(self.Counter), x=self.width / 2, y=self.height - 60, anchor_x='center',
                                               anchor_y='center', font_size=24, color=(0, 0, 0, 255), batch=self.Batch)
 
@@ -70,6 +71,7 @@ class Simulation(pyglet.window.Window):
         # Create the ground in physics engine
         Ground = pymunk.Poly.create_box(self.Space.static_body, size=(self.width, 20))
         Ground.body.position = self.width / 2, 10
+        Ground.id = 'Ground'
         self.Space.add(Ground)
 
         # Create the sprite for the ground
@@ -79,6 +81,7 @@ class Simulation(pyglet.window.Window):
         # Create Wall in physics engine
         Wall = pymunk.Poly.create_box(self.Space.static_body, size=(20, self.height))
         Wall.body.position = 10, self.height / 2
+        Wall.id = 'Wall'
         Wall.elasticity = 1
         self.Space.add(Wall)
 
@@ -86,17 +89,21 @@ class Simulation(pyglet.window.Window):
         WallImg = pyglet.image.load('res/wall.png')
         self.WallSprite = pyglet.sprite.Sprite(WallImg, x=0, y=0, batch=self.Batch)
 
-        self.BlockRight = Block(10000, 2 * (self.width / 3), 45, self.Space, self.Batch)
-        self.BlockRight.give_velocity(-10)
+        self.BlockRight = Block(1000000, 2 * (self.width / 3), 45, self.Space, self.Batch)
+        self.BlockRight.give_velocity(-100)
 
         self.BlockLeft = Block(1, self.width / 3, 45, self.Space, self.Batch)
 
         pyglet.app.run()
 
     def coll_begin(self, arbiter, space, data):
-        self.Counter += 1
-        if self.Counter > 0:
-            self.CounterLabel.text = 'Counter: {}'.format(self.Counter)
+        InvolvesGround = False
+        for shape in arbiter.shapes:
+            if shape.id == 'Ground':
+                InvolvesGround = True
+        if not InvolvesGround:
+            self.Counter += 1
+        self.CounterLabel.text = 'Counter: {}'.format(self.Counter)
         return True
 
     def on_draw(self):
@@ -104,6 +111,7 @@ class Simulation(pyglet.window.Window):
         self.Batch.draw()
 
     def update(self, dt):
-        self.Space.step(dt)
+        for _ in range(1000):
+            self.Space.step(dt/1000)
         self.BlockRight.update()
         self.BlockLeft.update()

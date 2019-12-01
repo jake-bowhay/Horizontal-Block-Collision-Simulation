@@ -9,6 +9,7 @@ class Application(tkinter.Frame):
         self.grid()
         self.NumberOfBlocks = 0
         self.BlockRows = []
+        self.Validator = (self.register(self.validate), '%P')
         self.create_widgets(master)
 
     def create_widgets(self, master):
@@ -23,7 +24,7 @@ class Application(tkinter.Frame):
         tkinter.Button(master, text='Run Simulation', command=lambda: self.launch_simulation()).grid(row=2, column=3)
 
         tkinter.Label(master, text='Starting velocity (1-100):').grid(row=3, column=1)
-        tkinter.Entry(master).grid(row=3, column=2)
+        tkinter.Entry(master, validate='key', validatecommand=self.Validator).grid(row=3, column=2)
 
         tkinter.Label(master, text='Mass').grid(row=4, column=2)
         tkinter.Label(master, text='Elasticity').grid(row=4, column=3)
@@ -31,15 +32,28 @@ class Application(tkinter.Frame):
         for row in range(1, 3):
             self.generate_button_row(master)
 
+    def validate(self, Value):
+        try:
+            IntValue = int(Value)
+            if 0 < IntValue < 100:
+                return True
+            else:
+                messagebox.showerror('Value out of Range', 'Integer must be between 1-100')
+                return False
+        except ValueError:
+            if len(Value) == 0:
+                return True
+            messagebox.showerror('Invalid input', 'Value must be an integer')
+            return False
+
     def generate_button_row(self, master):
-        print(self.NumberOfBlocks)
         if self.NumberOfBlocks < 5:
             self.NumberOfBlocks += 1
             Row = []
             RowNumber = self.NumberOfBlocks + 4
             Row.append(tkinter.Label(master, text='Block {}'.format(self.NumberOfBlocks)))
             for i in range(2):
-                Row.append(tkinter.Entry(master))
+                Row.append(tkinter.Entry(master, validate='key', validatecommand=self.Validator))
             for x, Item in enumerate(Row):
                 Item.grid(row=RowNumber, column=x + 1)
             self.BlockRows.append(Row)
