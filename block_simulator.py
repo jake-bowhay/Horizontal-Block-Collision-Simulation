@@ -6,13 +6,14 @@ class Block:
     """
     The class for a block
     Mass: the mass the block
+    Elasticity:
     X: Initial x position
     Y: Initial y position
     PhysSpace: The physics space to add items to
     RenderBatch: Batch to add block to
     """
 
-    def __init__(self, Mass, X, Y, PhysSpace, RenderBatch):
+    def __init__(self, Mass, Elasticity, X, Y, PhysSpace, RenderBatch):
         # Create body with given mass and infinite moment of inertia
         self.Body = pymunk.Body(Mass, pymunk.inf)
         # Set Body's position
@@ -21,7 +22,7 @@ class Block:
         BodyShape = pymunk.Poly.create_box(self.Body, size=(50, 50))
         BodyShape.id = 'Block'
         # Define shapes elasticity
-        BodyShape.elasticity = 1
+        BodyShape.elasticity = Elasticity
         # Add block to the physics space
         PhysSpace.add(self.Body, BodyShape)
 
@@ -44,9 +45,8 @@ class Block:
 
 
 class Simulation(pyglet.window.Window):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, Data, *args, **kwargs):
         super().__init__(*args, **kwargs)
-
         # Set background to be clear
         pyglet.gl.glClearColor(1, 1, 1, 1)
         # Set clock speed
@@ -60,7 +60,7 @@ class Simulation(pyglet.window.Window):
                                             batch=self.Batch, anchor_x='center', anchor_y='center', font_size=24,
                                             color=(0, 0, 0, 255))
         self.Counter = 0
-        self.CounterLabel = pyglet.text.Label('Counter = 0'.format(self.Counter), x=self.width / 2, y=self.height - 60, anchor_x='center',
+        self.CounterLabel = pyglet.text.Label('Collision Counter = 0'.format(self.Counter), x=self.width / 2, y=self.height - 60, anchor_x='center',
                                               anchor_y='center', font_size=24, color=(0, 0, 0, 255), batch=self.Batch)
 
         # Initiate space for Physics engine
@@ -89,10 +89,12 @@ class Simulation(pyglet.window.Window):
         WallImg = pyglet.image.load('res/wall.png')
         self.WallSprite = pyglet.sprite.Sprite(WallImg, x=0, y=0, batch=self.Batch)
 
-        self.BlockRight = Block(1000000, 2 * (self.width / 3), 45, self.Space, self.Batch)
-        self.BlockRight.give_velocity(-100)
+        self.Blocks = []
+        NumberOfBlocks = len(Data['Blocks'])
+        for BlockNumber, BlockData in enumerate(Data['Blocks']):
+            self.Blocks.append(Block(BlockData['Mass'], BlockData['Elasticity'], (BlockNumber + 1) * (self.width / (NumberOfBlocks + 1)), 45, self.Space, self.Batch))
 
-        self.BlockLeft = Block(1, self.width / 3, 45, self.Space, self.Batch)
+        self.Blocks[-1].give_velocity(-Data['StartVelocity'])
 
         pyglet.app.run()
 
@@ -103,7 +105,7 @@ class Simulation(pyglet.window.Window):
                 InvolvesGround = True
         if not InvolvesGround:
             self.Counter += 1
-        self.CounterLabel.text = 'Counter: {}'.format(self.Counter)
+        self.CounterLabel.text = 'Collision Counter: {}'.format(self.Counter)
         return True
 
     def on_draw(self):
@@ -111,7 +113,7 @@ class Simulation(pyglet.window.Window):
         self.Batch.draw()
 
     def update(self, dt):
-        for _ in range(1000):
-            self.Space.step(dt/1000)
-        self.BlockRight.update()
-        self.BlockLeft.update()
+        for _ in range(2000):
+            self.Space.step(dt/2000)
+        for IndividualBlock in self.Blocks:
+            IndividualBlock.update()

@@ -51,7 +51,7 @@ class Application(tkinter.Frame):
             return False
 
     def generate_button_row(self, master):
-        if self.NumberOfBlocks < 5:
+        if self.NumberOfBlocks < 10:
             self.NumberOfBlocks += 1
             Row = []
             RowNumber = self.NumberOfBlocks + 4
@@ -82,7 +82,7 @@ class Application(tkinter.Frame):
         except ValueError:
             messagebox.showerror('Invalid Input', 'Values cannot be blank')
         else:
-            Simulation(1280, 720, "Block Collision Simulator", resizable=False)
+            Simulation(Data, 1280, 720, "Block Collision Simulator", resizable=False)
 
 
 root = tkinter.Tk()
