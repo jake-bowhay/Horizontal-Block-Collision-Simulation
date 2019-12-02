@@ -9,6 +9,7 @@ class Application(tkinter.Frame):
         self.grid()
         self.NumberOfBlocks = 0
         self.BlockRows = []
+        self.Velocity = None
         self.ValidatorVelocity = (self.register(self.validate), '%P', 1, 100)
         self.ValidatorMass = (self.register(self.validate), '%P', 1, 1000000)
         self.ValidatorElasticity = (self.register(self.validate), '%P', 0, 1)
@@ -26,7 +27,8 @@ class Application(tkinter.Frame):
         tkinter.Button(master, text='Run Simulation', command=lambda: self.launch_simulation()).grid(row=2, column=3)
 
         tkinter.Label(master, text='Starting velocity (1-100):').grid(row=3, column=1)
-        tkinter.Entry(master, validate='key', validatecommand=self.ValidatorVelocity).grid(row=3, column=2)
+        self.Velocity = tkinter.Entry(master, validate='key', validatecommand=self.ValidatorVelocity)
+        self.Velocity.grid(row=3, column=2)
 
         tkinter.Label(master, text='Mass').grid(row=4, column=2)
         tkinter.Label(master, text='Elasticity').grid(row=4, column=3)
@@ -63,17 +65,24 @@ class Application(tkinter.Frame):
             messagebox.showwarning('Maximum Number Exceeded', "The maximum number of blocks that can be simulated is 5")
 
     def delete_button_row(self):
-        try:
-            LastRow = self.BlockRows.pop()
-        except:
-            messagebox.showerror('Error', 'No block to delete')
+        if len(self.BlockRows) == 1:
+            messagebox.showerror('Can\'t delete', 'Simulation must have at least one block')
         else:
+            LastRow = self.BlockRows.pop()
             for Item in LastRow:
                 Item.grid_forget()
             self.NumberOfBlocks -= 1
 
     def launch_simulation(self):
-        Simulation(1280, 720, "Block Collision Simulator", resizable=False)
+        try:
+            Data = {'StartVelocity': float(self.Velocity.get()), 'Blocks': []}
+            for Row in self.BlockRows:
+                RowData = {'Mass': float(Row[1].get()), 'Elasticity': float(Row[2].get())}
+                Data['Blocks'].append(RowData)
+        except ValueError:
+            messagebox.showerror('Invalid Input', 'Values cannot be blank')
+        else:
+            Simulation(1280, 720, "Block Collision Simulator", resizable=False)
 
 
 root = tkinter.Tk()
