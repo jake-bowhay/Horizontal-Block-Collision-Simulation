@@ -62,7 +62,7 @@ class Application(tkinter.Frame):
                 Item.grid(row=RowNumber, column=x + 1)
             self.BlockRows.append(Row)
         else:
-            messagebox.showwarning('Maximum Number Exceeded', "The maximum number of blocks that can be simulated is 5")
+            messagebox.showwarning('Maximum Number Exceeded', "The maximum number of blocks that can be simulated is 10")
 
     def delete_button_row(self):
         if len(self.BlockRows) == 1:
