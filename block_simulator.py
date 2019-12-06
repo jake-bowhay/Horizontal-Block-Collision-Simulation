@@ -121,13 +121,13 @@ class Simulation(pyglet.window.Window):
         pyglet.app.run()
 
     def coll_begin(self, arbiter, space, data):
-        '''
+        """
         Function to be called when a collision begins follows format defined in pymunk API
         :param arbiter: Arbiter contains information about the colliding shapes and the data about the collision
         :param space: The space object in which the collision took place
         :param data: Dictionary containing
         :return: Returns a boolean. Return true for pymunk to process collision or false to ignore the collision
-        '''
+        """
         # Check if the collision involves the ground as the counter should not increase from blocks hitting the ground
         InvolvesGround = False
         for Shape in arbiter.shapes:
