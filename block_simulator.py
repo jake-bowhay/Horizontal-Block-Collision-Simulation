@@ -49,6 +49,10 @@ class Simulation(pyglet.window.Window):
         super().__init__(*args, **kwargs)
         # Set background to be clear
         pyglet.gl.glClearColor(1, 1, 1, 1)
+
+        icon = pyglet.image.load('res/icon.ico')
+        self.set_icon(icon)
+
         # Set clock speed
         pyglet.clock.schedule_interval(self.update, 1/60)
 

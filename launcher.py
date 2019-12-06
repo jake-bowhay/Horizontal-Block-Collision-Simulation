@@ -87,5 +87,6 @@ class Application(tkinter.Frame):
 
 root = tkinter.Tk()
 root.title('Block Simulator')
+root.iconbitmap('res/icon.ico')
 app = Application(master=root)
 app.mainloop()
