@@ -19,7 +19,7 @@ class Application(tkinter.Frame):
 
     def create_widgets(self, master):
         """
-        Creates all of widgets to be displayed in the window
+        Creates all of widgets to be displayed in the window and adds them to
         """
         tkinter.Label(master, text='Horizontal Block Collision Simulator',
                       font=('Lucida Grande', 30)).grid(row=0, column=1, columnspan=3, sticky='we')
@@ -31,7 +31,7 @@ class Application(tkinter.Frame):
 
         tkinter.Button(master, text='Add Block', command=lambda: self.generate_block_row(master)) \
             .grid(row=2, column=1)
-        tkinter.Button(master, text='Remove Block', command=lambda: self.delete_button_row()).grid(row=2, column=2)
+        tkinter.Button(master, text='Remove Block', command=lambda: self.delete_block_row()).grid(row=2, column=2)
         tkinter.Button(master, text='Run Simulation', command=lambda: self.launch_simulation()).grid(row=2, column=3)
 
         tkinter.Label(master, text='Starting velocity (1-100):').grid(row=3, column=1)
@@ -88,7 +88,10 @@ class Application(tkinter.Frame):
             messagebox.showwarning('Maximum Number Exceeded',
                                    "The maximum number of blocks that can be simulated is 10")
 
-    def delete_button_row(self):
+    def delete_block_row(self):
+        """
+        Deletes the last row in the Blockrow list
+        """
         # Prevent user from having 0 blocks
         if len(self.BlockRows) == 1:
             messagebox.showerror('Can\'t delete', 'Simulation must have at least one block')
