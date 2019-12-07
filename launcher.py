@@ -24,19 +24,22 @@ class Application(tkinter.Frame):
         tkinter.Label(master, text='Horizontal Block Collision Simulator',
                       font=('Lucida Grande', 30)).grid(row=0, column=1, columnspan=3, sticky='we')
 
+        with open('res/instructions.txt') as InstructionFile:
+            Instructions = InstructionFile.read()
+
+        tkinter.Label(master, text=Instructions).grid(row=1, column=1, columnspan=3, sticky='we')
+
         tkinter.Button(master, text='Add Block', command=lambda: self.generate_block_row(master)) \
             .grid(row=2, column=1)
-
         tkinter.Button(master, text='Remove Block', command=lambda: self.delete_button_row()).grid(row=2, column=2)
-
         tkinter.Button(master, text='Run Simulation', command=lambda: self.launch_simulation()).grid(row=2, column=3)
 
         tkinter.Label(master, text='Starting velocity (1-100):').grid(row=3, column=1)
         self.Velocity = tkinter.Entry(master, validate='key', validatecommand=self.ValidatorVelocity)
         self.Velocity.grid(row=3, column=2)
 
-        tkinter.Label(master, text='Mass').grid(row=4, column=2)
-        tkinter.Label(master, text='Elasticity').grid(row=4, column=3)
+        tkinter.Label(master, text='Mass (1-1000000').grid(row=4, column=2)
+        tkinter.Label(master, text='Elasticity (0-1)').grid(row=4, column=3)
 
         for row in range(2):
             self.generate_block_row(master)
@@ -73,7 +76,7 @@ class Application(tkinter.Frame):
             # List to store the contents of the row
             Row = []
             # Offset the row number to allow for title and instructions etc
-            RowNumber = self.NumberOfBlocks + 4
+            RowNumber = self.NumberOfBlocks + 5
             Row.append(tkinter.Label(master, text='Block {}'.format(self.NumberOfBlocks)))
             Row.append(tkinter.Entry(master, validate='key', validatecommand=self.ValidatorMass))
             Row.append(tkinter.Entry(master, validate='key', validatecommand=self.ValidatorElasticity))

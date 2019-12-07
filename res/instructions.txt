@@ -1,0 +1,4 @@
+This program simulates blocks colliding on a horizontal plane. The program can simulate between 1 - 10 blocks which can
+be added and removed with the corresponding buttons. In the simulation blocks are drawn left to right so block 1 is the
+furthest left. The start velocity between 1-100 is given to the furthest right block. Each block can have mass between
+1-1000000 and 0-1. Press Run Simulation to begin and this will open a new window.
